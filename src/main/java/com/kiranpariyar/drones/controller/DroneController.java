@@ -30,8 +30,15 @@ public class DroneController {
     }
 
     @GetMapping("/{id}/medications")
-    public ResponseEntity<List<MedicationDto>> load(@PathVariable("id") int id) {
+    public ResponseEntity<List<MedicationDto>> getMedications(@PathVariable("id") int id) {
         return ResponseEntity.ok().body(droneService.getMedications(id));
     }
+
+
+    @GetMapping("/available")
+    public ResponseEntity<List<DroneDto>> getAvailable() {
+        return ResponseEntity.ok().body(droneService.getAvailable());
+    }
+
 
 }

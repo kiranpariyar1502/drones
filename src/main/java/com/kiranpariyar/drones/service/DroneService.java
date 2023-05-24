@@ -77,4 +77,9 @@ public class DroneService {
         return requestedMedicationsWeight + existedMedicationWeight > drone.getWeightLimit();
     }
 
+    public List<DroneDto> getAvailable() {
+        return droneRepository.findAllByState(State.IDLE).stream()
+                .map(drone -> droneMapper.toDto(drone))
+                .collect(Collectors.toList());
+    }
 }
