@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("drones")
 public class DroneController {
@@ -25,6 +27,11 @@ public class DroneController {
     @PostMapping("/{id}/load")
     public ResponseEntity<DroneDto> load(@PathVariable("id") int id, @Valid @RequestBody MedicationDto requestBody) {
         return ResponseEntity.ok().body(droneService.load(id, requestBody));
+    }
+
+    @GetMapping("/{id}/medications")
+    public ResponseEntity<List<MedicationDto>> load(@PathVariable("id") int id) {
+        return ResponseEntity.ok().body(droneService.getMedications(id));
     }
 
 }
