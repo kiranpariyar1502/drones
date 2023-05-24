@@ -1,7 +1,7 @@
 package com.kiranpariyar.drones.exception.handler;
 
 
-import com.kiranpariyar.drones.exception.DroneWeightLimitException;
+import com.kiranpariyar.drones.exception.DroneApiException;
 import com.kiranpariyar.drones.exception.EntityNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DroneWeightLimitException.class)
+    @ExceptionHandler(DroneApiException.class)
     public ResponseEntity<Object> handleWeightLimit(
             RuntimeException ex) {
         return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);

@@ -23,6 +23,10 @@ public class DroneController {
         return ResponseEntity.ok().body(droneService.register(droneDto));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<DroneDto> findById(@PathVariable("id") int id) {
+        return ResponseEntity.ok().body(droneService.findByIdAndMapToDto(id));
+    }
 
     @PostMapping("/{id}/load")
     public ResponseEntity<DroneDto> load(@PathVariable("id") int id, @Valid @RequestBody MedicationDto requestBody) {

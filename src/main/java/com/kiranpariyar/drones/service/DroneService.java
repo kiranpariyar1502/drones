@@ -5,7 +5,7 @@ import com.kiranpariyar.drones.dto.MedicationDto;
 import com.kiranpariyar.drones.entity.Drone;
 import com.kiranpariyar.drones.entity.Medication;
 import com.kiranpariyar.drones.enums.State;
-import com.kiranpariyar.drones.exception.DroneWeightLimitException;
+import com.kiranpariyar.drones.exception.DroneApiException;
 import com.kiranpariyar.drones.exception.EntityNotFoundException;
 import com.kiranpariyar.drones.mapper.DroneMapper;
 import com.kiranpariyar.drones.mapper.MedicationMapper;
@@ -35,8 +35,9 @@ public class DroneService {
         return droneRepository.save(drone);
     }
 
-    public Drone findById(int id) {
-        return droneRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Drone with given id not found."));
+    public DroneDto findByIdAndMapToDto(int id) {
+        Drone drone = findById(id);
+        return droneMapper.toDto(drone);
     }
 
     public DroneDto register(DroneDto droneDto) {
@@ -46,10 +47,18 @@ public class DroneService {
 
     public DroneDto load(int id, MedicationDto medicationDto) throws EntityNotFoundException {
         Drone drone = findById(id);
+
+        if (batteryLevelIsNotAcceptable(drone.getBatteryLevel())) {
+            throw new DroneApiException("Drone can not be loaded. Battery is down.");
+        }
+
+        drone.setState(State.LOADING);
+        save(drone);
+
         Medication medication = medicationMapper.toEntity(medicationDto);
 
         if (weightIsNotAcceptable(drone, medication)) {
-            throw new DroneWeightLimitException("Maximum allowed weight for medications is " + drone.getWeightLimit());
+            throw new DroneApiException("Maximum allowed weight for medications is " + drone.getWeightLimit());
         }
 
         Set<Medication> medications = new HashSet<>();
@@ -71,15 +80,23 @@ public class DroneService {
                 .collect(Collectors.toList());
     }
 
+    public List<DroneDto> getAvailable() {
+        return droneRepository.findAllByState(State.IDLE).stream()
+                .map(drone -> droneMapper.toDto(drone))
+                .collect(Collectors.toList());
+    }
+
+    private Drone findById(int id) {
+        return droneRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Drone with given id not found."));
+    }
+
     private boolean weightIsNotAcceptable(Drone drone, Medication requestedMedication) {
         double requestedMedicationsWeight = requestedMedication.getWeight();
         double existedMedicationWeight = drone.getMedications().stream().mapToDouble(Medication::getWeight).sum();
         return requestedMedicationsWeight + existedMedicationWeight > drone.getWeightLimit();
     }
 
-    public List<DroneDto> getAvailable() {
-        return droneRepository.findAllByState(State.IDLE).stream()
-                .map(drone -> droneMapper.toDto(drone))
-                .collect(Collectors.toList());
+    private boolean batteryLevelIsNotAcceptable(float batteryLevel) {
+        return batteryLevel < 25;
     }
 }
