@@ -86,6 +86,10 @@ public class DroneService {
                 .collect(Collectors.toList());
     }
 
+    public Iterable<Drone> findAll() {
+        return droneRepository.findAll();
+    }
+
     private Drone findById(int id) {
         return droneRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Drone with given id not found."));
     }
