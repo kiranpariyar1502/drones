@@ -24,7 +24,7 @@ public class DroneBatteryCheckTask {
     @Autowired
     private DroneService droneService;
 
-    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(initialDelay = 30, fixedRate = 60, timeUnit = TimeUnit.SECONDS)
     public void checkDroneBatteryLevels() {
         log.info("Checking Drone battery level.");
         Iterable<Drone> drones = droneService.findAll();

@@ -1,0 +1,23 @@
+[
+  {
+    "serialNumber":"DRONE7001",
+    "model":"LightWeight",
+    "weightLimit":500.0,
+    "batteryLevel":80,
+    "state":"IDLE"
+  },
+  {
+    "serialNumber":"DRONE7002",
+    "model":"CruiserWeight",
+    "weightLimit":500.0,
+    "batteryLevel":90,
+    "state":"IDLE"
+  },
+  {
+    "serialNumber":"DRONE7003",
+    "model":"LightWeight",
+    "weightLimit":500.0,
+    "batteryLevel":100,
+    "state":"IDLE"
+  }
+]
