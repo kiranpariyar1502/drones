@@ -1,8 +1,9 @@
 package com.kiranpariyar.drones.exception.handler;
 
 
-import com.kiranpariyar.drones.exception.DroneApiException;
+import com.kiranpariyar.drones.exception.DroneApiParameterException;
 import com.kiranpariyar.drones.exception.EntityNotFoundException;
+import com.kiranpariyar.drones.response.ApiResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +20,15 @@ public class ApiExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleNotFound(
             RuntimeException ex) {
-        return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND);
+        ApiResponse<String> apiResponse = ApiResponse.clientError(ex.getMessage()).build();
+        return new ResponseEntity<>(apiResponse, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DroneApiException.class)
-    public ResponseEntity<Object> handleWeightLimit(
+    @ExceptionHandler(DroneApiParameterException.class)
+    public ResponseEntity<Object> handleApiException(
             RuntimeException ex) {
-        return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        ApiResponse<String> apiResponse = ApiResponse.clientError(ex.getMessage()).build();
+        return new ResponseEntity<>(apiResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -33,7 +36,8 @@ public class ApiExceptionHandler {
         List<String> errors = new ArrayList<>();
         ex.getBindingResult().getFieldErrors()
                 .forEach(error -> errors.add(error.getField() + ": " + error.getDefaultMessage()));
-        return new ResponseEntity<>(errors, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        ApiResponse<String> apiResponse = ApiResponse.clientError(String.join(",", errors)).build();
+        return new ResponseEntity<>(apiResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
 }

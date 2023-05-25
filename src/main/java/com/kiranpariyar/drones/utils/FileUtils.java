@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class FileUtils {
+
     public static String readAsStringFromResource(String filename) throws IOException {
         ClassLoader classLoader = FileUtils.class.getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(filename);

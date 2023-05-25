@@ -5,7 +5,7 @@ import com.kiranpariyar.drones.dto.MedicationDto;
 import com.kiranpariyar.drones.entity.Drone;
 import com.kiranpariyar.drones.entity.Medication;
 import com.kiranpariyar.drones.enums.State;
-import com.kiranpariyar.drones.exception.DroneApiException;
+import com.kiranpariyar.drones.exception.DroneApiParameterException;
 import com.kiranpariyar.drones.exception.EntityNotFoundException;
 import com.kiranpariyar.drones.mapper.DroneMapper;
 import com.kiranpariyar.drones.mapper.MedicationMapper;
@@ -49,7 +49,7 @@ public class DroneService {
         Drone drone = findById(id);
 
         if (batteryLevelIsNotAcceptable(drone.getBatteryLevel())) {
-            throw new DroneApiException("Drone can not be loaded. Battery is down.");
+            throw new DroneApiParameterException("Drone can not be loaded. Battery is down.");
         }
 
         drone.setState(State.LOADING);
@@ -58,7 +58,7 @@ public class DroneService {
         Medication medication = medicationMapper.toEntity(medicationDto);
 
         if (weightIsNotAcceptable(drone, medication)) {
-            throw new DroneApiException("Maximum allowed weight for medications is " + drone.getWeightLimit());
+            throw new DroneApiParameterException("Maximum allowed weight for medications is " + drone.getWeightLimit());
         }
 
         Set<Medication> medications = new HashSet<>();
