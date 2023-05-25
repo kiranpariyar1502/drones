@@ -1,0 +1,30 @@
+version: '3.5'
+
+services:
+  db:
+    image: mysql/mysql-server:8.0.18
+    environment:
+      MYSQL_DATABASE: drones
+      MYSQL_USER: test
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - ./.mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  drones-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      spring_profiles_active: compose
+
+networks:
+  default:
+    name: drones_net
+
