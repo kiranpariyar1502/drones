@@ -4,6 +4,7 @@ services:
   db:
     image: mysql/mysql-server:8.0.18
     environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
       MYSQL_DATABASE: drones
       MYSQL_USER: test
       MYSQL_PASSWORD: password
@@ -12,15 +13,20 @@ services:
       - ./.mysql:/var/lib/mysql
     ports:
       - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 10
 
   api:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
-      - db
+        db:
+          condition: service_healthy
     environment:
       spring_profiles_active: compose
 
